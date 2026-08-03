@@ -14,6 +14,22 @@ public class UserServiceImpl implements UserService {
     private static AtomicInteger id = new AtomicInteger(0);
     private List<User> users = new ArrayList<>();
 
+    private static @NonNull User getUpdatedUser(User user, Optional<User> existingUser) {
+        User updatedUser = existingUser.get();
+
+        // Merge only non-null/non-blank fields from the incoming payload
+        if (user.getFirstName() != null && !user.getFirstName().isBlank()) {
+            updatedUser.setFirstName(user.getFirstName());
+        }
+        if (user.getLastName() != null && !user.getLastName().isBlank()) {
+            updatedUser.setLastName(user.getLastName());
+        }
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            updatedUser.setEmail(user.getEmail());
+        }
+        return updatedUser;
+    }
+
     public List<User> fetchAllUsers() {
         return users;
     }
@@ -48,21 +64,5 @@ public class UserServiceImpl implements UserService {
             }
             return Optional.empty();
         }
-    }
-
-    private static @NonNull User getUpdatedUser(User user, Optional<User> existingUser) {
-        User updatedUser = existingUser.get();
-
-        // Merge only non-null/non-blank fields from the incoming payload
-        if (user.getFirstName() != null && !user.getFirstName().isBlank()) {
-            updatedUser.setFirstName(user.getFirstName());
-        }
-        if (user.getLastName() != null && !user.getLastName().isBlank()) {
-            updatedUser.setLastName(user.getLastName());
-        }
-        if (user.getEmail() != null && !user.getEmail().isBlank()) {
-            updatedUser.setEmail(user.getEmail());
-        }
-        return updatedUser;
     }
 }
