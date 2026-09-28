@@ -1,9 +1,10 @@
-package com.app.ecom.dto;
+package com.app.ecom.dto.request;
 
+import com.app.ecom.dto.AddressDto;
 import lombok.Data;
 
 @Data
-public class UserRequest {
+public class UserRequestDto {
     private String firstName;
     private String lastName;
     private String email;

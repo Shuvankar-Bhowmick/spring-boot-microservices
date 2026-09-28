@@ -1,18 +1,18 @@
 package com.app.ecom.service;
 
-import com.app.ecom.dto.UserRequest;
-import com.app.ecom.dto.UserResponse;
+import com.app.ecom.dto.request.UserRequestDto;
+import com.app.ecom.dto.request.UserResponseDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    List<UserResponse> fetchAllUsers();
+    List<UserResponseDto> fetchAllUsers();
 
-    String addUser(UserRequest user);
+    String addUser(UserRequestDto user);
 
-    Optional<UserResponse> getUserById(Long id);
+    Optional<UserResponseDto> getUserById(Long id);
 
-    Optional<UserResponse> updateUserById(Long id, UserRequest user);
+    Optional<UserResponseDto> updateUserById(Long id, UserRequestDto user);
 }

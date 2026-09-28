@@ -1,7 +1,7 @@
 package com.app.ecom.controller;
 
-import com.app.ecom.dto.UserRequest;
-import com.app.ecom.dto.UserResponse;
+import com.app.ecom.dto.request.UserRequestDto;
+import com.app.ecom.dto.request.UserResponseDto;
 import com.app.ecom.exception.ResourceNotFoundException;
 import com.app.ecom.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -20,23 +20,23 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         return ResponseEntity.ok(userService.fetchAllUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id)));
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserRequest user) {
+    public ResponseEntity<String> createUser(@RequestBody UserRequestDto user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.addUser(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
-                                                   @RequestBody UserRequest user) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id,
+                                                      @RequestBody UserRequestDto user) {
         return ResponseEntity.ok(userService.updateUserById(id, user).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id)));
     }
 

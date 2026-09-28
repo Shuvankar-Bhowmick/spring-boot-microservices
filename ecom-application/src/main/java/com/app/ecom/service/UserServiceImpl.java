@@ -1,8 +1,8 @@
 package com.app.ecom.service;
 
 import com.app.ecom.dto.AddressDto;
-import com.app.ecom.dto.UserRequest;
-import com.app.ecom.dto.UserResponse;
+import com.app.ecom.dto.request.UserRequestDto;
+import com.app.ecom.dto.request.UserResponseDto;
 import com.app.ecom.model.Address;
 import com.app.ecom.model.User;
 import com.app.ecom.repository.UserRepository;
@@ -34,22 +34,22 @@ public class UserServiceImpl implements UserService {
         return existingUser;
     }
 
-    public List<UserResponse> fetchAllUsers() {
+    public List<UserResponseDto> fetchAllUsers() {
         return userRepository.findAll().stream().map(this::mapToUserResponse).toList();
     }
 
-    public String addUser(UserRequest user) {
+    public String addUser(UserRequestDto user) {
         userRepository.save(this.mapToUserFromUserRequest(user));
         return "User added successfully";
     }
 
     @Override
-    public Optional<UserResponse> getUserById(Long id) {
+    public Optional<UserResponseDto> getUserById(Long id) {
         return userRepository.findById(id).map(this::mapToUserResponse);
     }
 
     @Override
-    public Optional<UserResponse> updateUserById(Long id, UserRequest user) {
+    public Optional<UserResponseDto> updateUserById(Long id, UserRequestDto user) {
         if (id == null || user == null) {
             return Optional.empty();
         }
@@ -60,8 +60,8 @@ public class UserServiceImpl implements UserService {
                 .map(this::mapToUserResponse);
     }
 
-    private UserResponse mapToUserResponse(User user) {
-        UserResponse userResponse = new UserResponse();
+    private UserResponseDto mapToUserResponse(User user) {
+        UserResponseDto userResponse = new UserResponseDto();
         userResponse.setId(user.getId());
         userResponse.setFirstName(user.getFirstName());
         userResponse.setLastName(user.getLastName());
@@ -81,14 +81,14 @@ public class UserServiceImpl implements UserService {
         return userResponse;
     }
 
-    private User mapToUserFromUserRequest(UserRequest userRequest) {
+    private User mapToUserFromUserRequest(UserRequestDto userRequestDto) {
         User user = new User();
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getLastName());
-        user.setEmail(userRequest.getEmail());
-        user.setPhone(userRequest.getPhone());
-        if (userRequest.getAddress() != null) {
-            AddressDto addressDto = userRequest.getAddress();
+        user.setFirstName(userRequestDto.getFirstName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setEmail(userRequestDto.getEmail());
+        user.setPhone(userRequestDto.getPhone());
+        if (userRequestDto.getAddress() != null) {
+            AddressDto addressDto = userRequestDto.getAddress();
             Address address = new Address();
             address.setStreet(addressDto.getStreet());
             address.setCity(addressDto.getCity());
