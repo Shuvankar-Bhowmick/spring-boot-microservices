@@ -6,10 +6,7 @@ import com.app.ecom.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/products")
@@ -20,6 +17,18 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto product) {
         // Implement the logic to create a product
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(product));
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService
+                .createProduct(product));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponseDto> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductRequestDto product) {
+        // Implement the logic to update a product
+        ResponseEntity.status(HttpStatus.OK).body(productService.updateProduct(id, product));
+        return productService.updateProduct(id, product)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
