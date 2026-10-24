@@ -7,6 +7,7 @@ import com.app.ecom.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,5 +52,31 @@ public class ProductServiceImpl implements ProductService {
                 .map(existingProduct -> updateProductFromRequest(existingProduct, product))
                 .map(productRepository::save)
                 .map(ProductServiceImpl::mapToProductResponseFromProduct);
+    }
+
+    @Override
+    public List<ProductResponseDto> getProducts() {
+        return productRepository.findByActiveTrue().stream()
+                .map(ProductServiceImpl::mapToProductResponseFromProduct)
+                .toList();
+    }
+
+    @Override
+    public boolean deleteProduct(Long id) {
+        // mark the product as inactive instead of deleting it from the database
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setActive(false);
+                    productRepository.save(product);
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    @Override
+    public List<ProductResponseDto> searchProducts(String keyword) {
+        return productRepository.searchProducts(keyword).stream()
+                .map(ProductServiceImpl::mapToProductResponseFromProduct)
+                .toList();
     }
 }
