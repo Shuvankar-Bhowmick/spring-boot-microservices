@@ -1,6 +1,8 @@
 package com.app.ecom.service;
 
 import com.app.ecom.dto.request.CartItemRequestDto;
+import com.app.ecom.dto.response.CartResponseDto;
+import com.app.ecom.exception.ResourceNotFoundException;
 import com.app.ecom.model.CartItem;
 import com.app.ecom.repository.CartItemRepository;
 import com.app.ecom.repository.ProductRepository;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +60,46 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.save(newCartItem);
         }
         return true;
+    }
+
+    @Override
+    public boolean removeFromCart(String userId, Long productId) {
+        var product = productRepository.findById(productId);
+        if (product.isEmpty()) {
+            return false;
+        }
+
+        var user = userRepository.findById(Long.valueOf(userId));
+        if (user.isEmpty()) {
+            return false;
+        }
+
+        var cartItem = cartItemRepository.findByUserAndProduct(user.get(), product.get());
+        if (cartItem == null) {
+            return false;
+        }
+
+        cartItemRepository.delete(cartItem);
+        return true;
+    }
+
+    @Override
+    public List<CartResponseDto> getCartForUser(String userId) {
+        var user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
+        return cartItemRepository.findByUser(user).stream()
+                .map(this::toCartResponseDto)
+                .toList();
+    }
+
+    private CartResponseDto toCartResponseDto(CartItem cartItem) {
+        return new CartResponseDto(
+                cartItem.getId(),
+                cartItem.getProduct().getId(),
+                cartItem.getProduct().getName(),
+                cartItem.getQuantity(),
+                cartItem.getPrice()
+        );
     }
 }
