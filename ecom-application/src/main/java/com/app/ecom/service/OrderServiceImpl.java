@@ -34,9 +34,9 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("User ID must not be blank");
         }
 
-        final Long parsedUserId;
+        final long parsedUserId;
         try {
-            parsedUserId = Long.valueOf(userId);
+            parsedUserId = Long.parseLong(userId);
         } catch (NumberFormatException ex) {
             throw new IllegalArgumentException("User ID must be a valid number", ex);
         }
