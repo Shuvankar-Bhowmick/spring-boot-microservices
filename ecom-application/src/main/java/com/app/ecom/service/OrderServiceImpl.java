@@ -41,13 +41,16 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("User ID must be a valid number", ex);
         }
 
+
+        // Fetch the user
         var user = userRepository.findById(parsedUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
+        // Fetch the cart items for the user
         List<CartItem> cartItems = cartItemRepository.findByUser(user);
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("Cannot place an order with an empty cart");
         }
-
         Order order = new Order();
         order.setUser(user);
         order.setTotalAmount(BigDecimal.ZERO);
@@ -62,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new IllegalStateException("Cart item quantity must be greater than zero");
             }
 
+            // Fetch the product with a pessimistic lock to prevent concurrent stock modifications
             Product product = productRepository.findByIdForUpdate(cartItem.getProduct().getId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Product not found with ID: " + cartItem.getProduct().getId()));
